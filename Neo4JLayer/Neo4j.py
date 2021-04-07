@@ -36,7 +36,8 @@ class Neo4Niha:
     @staticmethod
     def __retrieve(tx, query):
         result = tx.run(query)
-        return result
+        nodes = [node for node in result]
+        return nodes
 
     @staticmethod
     def __delete(tx, query):

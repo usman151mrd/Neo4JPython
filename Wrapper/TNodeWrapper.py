@@ -45,17 +45,16 @@ class Neo4jNode:
         query = self.delete_query()
         response = self.db.delete(query)
 
-    def to_tnode(self, response):
-        nodes = [node for node in response]
+    def to_tnode(self,response ):
         tnode1 = Node()
-        print(nodes)
-        for node in nodes:
+
+        for node in response:
             data = node.data()
             print(data)
-            # print(set(node['n'].labels))
-            # print(node['n'].id)
-            # tnode1.Labels=set(node['n'].labels)
-            # tnode1.Id=node['n'].id
+            print(set(node['n'].labels))
+            print(node['n'].id)
+            tnode1.Labels=set(node['n'].labels)
+            tnode1.Id=node['n'].id
             print(node)
             '''
             print("p : ", data)
