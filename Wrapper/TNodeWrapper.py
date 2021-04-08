@@ -1,4 +1,5 @@
 from Neo4JLayer.Neo4j import Neo4Niha
+from Node import TNode
 
 
 class Neo4jNode:
@@ -37,7 +38,7 @@ class Neo4jNode:
 
     def retrieve_node(self):
         # query = self.retrieve_query()
-        query = "MATCH(n:RAM) RETURN n"
+        query = "MATCH(n:Test) RETURN n"
         response = self.db.retrieve(query)
         self.to_tnode(response)
 
@@ -45,48 +46,31 @@ class Neo4jNode:
         query = self.delete_query()
         response = self.db.delete(query)
 
-    def to_tnode(self,response ):
-        tnode1 = Node()
+    def to_tnode(self, response):
+        tnode1 = TNode()
 
         for node in response:
             data = node.data()
             print(data)
             print(set(node['n'].labels))
             print(node['n'].id)
-            tnode1.Labels=set(node['n'].labels)
-            tnode1.Id=node['n'].id
+            tnode1.Labels = set(node['n'].labels)
+            tnode1.Id = node['n'].id
+            tnode1.AoKID = data['n']['AoKID']
+            tnode1.AbstractionLevel = data['n']['AbstractionLevel']
+            tnode1.AgeInMilliseconds = data['n']['AgeInMilliSeconds']
+            tnode1.AttentionLevel = data['n']['AttentionLevel']
+            tnode1.Value = data['n']['Value']
+            tnode1.Validity = data['n']['Validity']
+            tnode1.Tag = data['n']['Tag']
+            tnode1.Evaluation = data['n']['Evaluation']
+            tnode1.ProcessingTag = data['n']['ProcessingTag']
+            tnode1.SystemLevelType = data['n']['SystemLevelType']
+            tnode1.TruthValue = data['n']['TruthValue']
             print(node)
-            '''
-            print("p : ", data)
-            print("id : ", node['n'].id)
-            print("label : ", list(node['n'].labels))
-            print("properties : ", dict(node['n']))
-            print("id : ", node['m'].id)
-            print("label : ", list(node['m'].labels))
-            print("properties : ", dict(node['m']))
-            print(node['r'].type)
-'''
-
-
-class Node:
-    def __init__(self):
-        self.Id = 0
-        self.AoKID = 0
-        self.Labels = set()
-        self.Value = 0
-        self.SystemLevelType = ""
-        self.AbstractionLevel = 0
-        self.Tag = ""
-        self.Validity = 0
-        self.ProcessingTag = ""
-        self.TruthValue = list()
-        self.Evaluation = ""
-        self.DateTimeStamp = ""
-        self.AgeInMilliseconds = 0
-        self.AttentionLevel = 0
 
 
 if __name__ == '__main__':
-    node = Node
+    node = TNode
     tnode = Neo4jNode(node)
     tnode.retrieve_node()
