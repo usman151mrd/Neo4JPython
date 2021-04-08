@@ -10,7 +10,7 @@ class Neo4jGraph:
         self.db = Neo4Niha()
 
     def retrieve_graph(self):
-        query = "MATCH(m:HD)-[r:aka]->(n:HardDisk) return m,r,n LIMIT 25"
+        query = "MATCH (n:TEST2)-[r]-(m:TEST1) return n,r,m"
         response = self.db.retrieve(query)
         self.to_graph(response)
 
@@ -24,20 +24,19 @@ class Neo4jGraph:
             _type = node['r'].type
             properties = dict(node['r'])
             relation = self.to_relation(_id, source_node, target_node, _type, properties)
-            if source_node.Labels[0] not in _nodes.keys():
-                _nodes[source_node.Labels[0]] = source_node
-            if target_node.Labels[0] not in _nodes.keys():
-                _nodes[target_node.Labels[0]] = source_node
-            key = "{source}-{relation}-{target}".format(source=source_node.Labels[0],relation=_type, target=target_node.Labels[0])
+            source_label = list(source_node.Labels)[0]
+            target_label = list(target_node.Labels)[0]
+            if source_label not in _nodes.keys():
+                _nodes[source_label] = source_node
+            if target_label not in _nodes.keys():
+                _nodes[target_label] = source_node
+            key = "{source}-{relation}-{target}".format(source=source_label, relation=_type, target=target_label)
             _edges[key] = relation
         self.graph.Nodes = _nodes
         self.graph.Edges = _edges
 
     def to_tnode(self, _node):
         node = Node()
-        print("38 : ", _node)
-        print(set(_node.labels))
-        print(_node.id)
         properties = dict(_node)
         node.Labels = set(_node.labels)
         node.Id = _node.id

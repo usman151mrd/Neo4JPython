@@ -9,7 +9,6 @@ class Relation:
         self.RelationType = str()
         self.SourceNode = Node  # TNode SourceNode
         self.TargetNode = Node  # TNode TargetNode
-        self.IsBiDirectional = True
         self.Properties = dict()  # map<string, TDimension> Properties
         self.AttentionLevel = 0.0
         self.TruthValue = dict()  # map<string, double> TruthValue
