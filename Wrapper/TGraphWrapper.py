@@ -12,54 +12,54 @@ class Neo4jGraph:
     def retrieve_graph(self):
         query = "MATCH(m:HD)-[r:aka]->(n:HardDisk) return m,r,n LIMIT 25"
         response = self.db.retrieve(query)
-        for node in response:
-            # print(node)
-            # print(node['m'].labels)
-            # print(node['n'].labels)
-           # print(node['r'].nodes[0])
+
+       # for node in response:
+        #   print(node)
+        #   print(node['m'].labels)
+        #   print(node['n'].labels)
+            #print(node['r'].nodes[0])
             #print(node['r'].nodes[1])
-            #print(node['r'].type)
-            print(node['r'])
-            properties = node.data()
-            # print(properties['m'])
-            # print(properties['r'])
-            # print(properties['n'])
+        #     #print(node['r'].type)
+        #     print(node['r'])
+        #     properties = node.data()
+        #     #print(properties['m'])
+        #     #print(properties['r'])
+        #     #print(properties['n'])
+        self.to_graph(response)
 
     def to_graph(self, response):
-        tgraph1 = Graph
-
-        for rel in response:
-            data = rel.data()
-            # print(data)
-            # print(set(trelation1['n'].labels))
-            # print(trelation1['n'].id)
-            tgraph1.id = set(rel['n'].labels)
-            tgraph1.Nodes = rel['n'].id
-            tgraph1.Edges = data['n']['AoKID']
-            # self.RepresentationType = str  # TERepresentationType RepresentationType
-
-    def to_tnode(self, response):
-        tnode1 = Node()
-
+        g = Graph
+        _nodes = dict()
+        _edges = dict()
         for node in response:
-            data = node.data()
-            print(data)
-            print(set(node['n'].labels))
-            print(node['n'].id)
-            tnode1.Labels = set(node['n'].labels)
-            tnode1.Id = node['n'].id
-            tnode1.AoKID = data['n']['AoKID']
-            tnode1.AbstractionLevel = data['n']['AbstractionLevel']
-            tnode1.AgeInMilliseconds = data['n']['AgeInMilliSeconds']
-            tnode1.AttentionLevel = data['n']['AttentionLevel']
-            tnode1.Value = data['n']['Value']
-            tnode1.Validity = data['n']['Validity']
-            tnode1.Tag = data['n']['Tag']
-            tnode1.Evaluation = data['n']['Evaluation']
-            tnode1.ProcessingTag = data['n']['ProcessingTag']
-            tnode1.SystemLevelType = data['n']['SystemLevelType']
-            tnode1.TruthValue = data['n']['TruthValue']
-            print(node)
+            source_node = self.to_tnode((node['r'].nodes[0]))
+            target_node = self.to_tnode((node['r'].nodes[1]))
+            _id = node['r'].id
+            _type = node['r'].type
+            properties = dict(node['r'])
+            relation = self.to_relation(_id, source_node, target_node, _type, properties)
+            if source_node.Labels[0] not in _nodes.keys():
+                _nodes[source_node.Labels[0]] = source_node
+
+    def to_tnode(self, node):
+        node = Node()
+        properties = node.data()
+        print(set(node.labels))
+        print(node.id)
+        node.Labels = set(node['n'].labels)
+        node.Id = node['n'].id
+        node.AoKID = properties['AoKID']
+        node.AbstractionLevel = properties['AbstractionLevel']
+        node.AgeInMilliseconds = properties['AgeInMilliSeconds']
+        node.AttentionLevel = properties['AttentionLevel']
+        node.Value = properties['Value']
+        node.Validity = properties['Validity']
+        node.Tag = properties['Tag']
+        node.Evaluation = properties['Evaluation']
+        node.ProcessingTag = properties['ProcessingTag']
+        node.SystemLevelType = properties['SystemLevelType']
+        # node.TruthValue = properties['TruthValue']
+        return node
 
     def to_trelation(self, response):
         trelation1 = Relation

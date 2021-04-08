@@ -1,5 +1,5 @@
 from Neo4JLayer.Neo4j import Neo4Niha
-from Node import TNode
+from Node import Node
 
 
 class Neo4jNode:
@@ -40,6 +40,7 @@ class Neo4jNode:
         # query = self.retrieve_query()
         query = "MATCH(n:Test) RETURN n"
         response = self.db.retrieve(query)
+        print("r", response)
         self.to_tnode(response)
 
     def delete_node(self):
@@ -47,7 +48,7 @@ class Neo4jNode:
         response = self.db.delete(query)
 
     def to_tnode(self, response):
-        tnode1 = TNode()
+        tnode1 = Node()
 
         for node in response:
             data = node.data()
@@ -66,11 +67,11 @@ class Neo4jNode:
             tnode1.Evaluation = data['n']['Evaluation']
             tnode1.ProcessingTag = data['n']['ProcessingTag']
             tnode1.SystemLevelType = data['n']['SystemLevelType']
-            tnode1.TruthValue = data['n']['TruthValue']
+            #tnode1.TruthValue = data['n']['TruthValue']
             print(node)
 
 
 if __name__ == '__main__':
-    node = TNode
+    node = Node
     tnode = Neo4jNode(node)
     tnode.retrieve_node()
