@@ -61,25 +61,19 @@ class Neo4jGraph:
         # node.TruthValue = properties['TruthValue']
         return node
 
-    def to_trelation(self, response):
-        trelation1 = Relation
-
-        for rel in response:
-            data = rel.data()
-            print(data)
-            print(set(trelation1['n'].labels))
-            print(trelation1['n'].id)
-            trelation1.Labels = set(rel['n'].labels)
-            trelation1.Neo4jId = rel['n'].id
-            trelation1.AoKID = data['n']['AoKID']
-            trelation1.RelationType = data['n']['RelationType']
-            trelation1.SourceNode = data['n']['SourceNode']
-            trelation1.TargetNode = data['n']['TargetNode']
-            trelation1.IsBiDirectional = data['n']['IsBiDirectional']
-            trelation1.Properties = data['n']['Properties']
-            trelation1.AttentionLevel = data['n']['AttentionLevel']
-            trelation1.TruthValue = data['n']['TruthValue']
-            print(rel)
+    def to_relation(self, _id, source, target, _relation, rel_properties):
+        relation = Relation()
+        relation.Labels = _relation
+        relation.Neo4jId = _id
+        relation.AoKID = rel_properties['AoKID']
+        relation.RelationType = rel_properties['RelationType']
+        relation.SourceNode = source
+        relation.TargetNode = target
+        relation.IsBiDirectional = False
+        relation.Properties = rel_properties
+        relation.AttentionLevel = 0.0
+        relation.TruthValue = dict()
+        return relation
 
 
 if __name__ == '__main__':
