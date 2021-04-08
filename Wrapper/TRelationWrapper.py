@@ -54,6 +54,10 @@ class Neo4jRelation:
             query = query1 + query2 + "MATCH p=(:n)-[r:" + self.relation.RelationType + "]-(:m) delete r"
         else:
             query = query1 + query2 + "MATCH p=(:n)->[r:" + self.relation.RelationType + "]->(:m) delete r"
+        query = "MATCH (n"
+        for label in self.node.Labels:
+            query += ":{label}".format(label=label)
+        query += "WHERE n.Neo4jID=" + self.node.Neo4jID + " DELETE n"
         return query
 
     def retrieve_query(self):
