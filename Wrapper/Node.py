@@ -1,4 +1,4 @@
-class TNode:
+class Node:
     def __init__(self):
         self.Id = 0
         self.AoKID = 0
