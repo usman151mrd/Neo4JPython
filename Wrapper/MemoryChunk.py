@@ -11,7 +11,4 @@ class MemoryChunk:
         self.DecayLevel = int()
         self.Importance = 0.0
         self.Evaluation = 0.0
-        self.Nid=list()
-        self.Rid=list()
-        self.rtype=str()
-        self.label=list()
+

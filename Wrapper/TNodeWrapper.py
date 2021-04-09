@@ -66,27 +66,27 @@ class Neo4jNode:
         response = self.db.update(query)
 
     def to_tnode(self, response):
-        tnode1 = Node()
+        node = Node()
 
-        for node in response:
-            data = node.data()
+        for _node in response:
+            data = _node.data()
             print(data)
-            print(set(node['n'].labels))
-            print(node['n'].id)
-            tnode1.Labels = set(node['n'].labels)
-            tnode1.Id = node['n'].id
-            tnode1.AoKID = data['n']['AoKID']
-            tnode1.AbstractionLevel = data['n']['AbstractionLevel']
-            tnode1.AgeInMilliseconds = data['n']['AgeInMilliSeconds']
-            tnode1.AttentionLevel = data['n']['AttentionLevel']
-            tnode1.Value = data['n']['Value']
-            tnode1.Validity = data['n']['Validity']
-            tnode1.Tag = data['n']['Tag']
-            tnode1.Evaluation = data['n']['Evaluation']
-            tnode1.ProcessingTag = data['n']['ProcessingTag']
-            tnode1.SystemLevelType = data['n']['SystemLevelType']
+            print(set(_node['n'].labels))
+            print(_node['n'].id)
+            node.Labels = set(_node['n'].labels)
+            node.Id = _node['n'].id
+            node.AoKID = data['n']['AoKID']
+            node.AbstractionLevel = data['n']['AbstractionLevel']
+            node.AgeInMilliseconds = data['n']['AgeInMilliSeconds']
+            node.AttentionLevel = data['n']['AttentionLevel']
+            node.Value = data['n']['Value']
+            node.Validity = data['n']['Validity']
+            node.Tag = data['n']['Tag']
+            node.Evaluation = data['n']['Evaluation']
+            node.ProcessingTag = data['n']['ProcessingTag']
+            node.SystemLevelType = data['n']['SystemLevelType']
             # tnode1.TruthValue = data['n']['TruthValue']
-            print(node)
+            print(_node)
 
 
 if __name__ == '__main__':
