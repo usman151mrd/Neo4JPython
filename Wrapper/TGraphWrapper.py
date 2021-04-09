@@ -10,33 +10,38 @@ class Neo4jGraph:
         self.db = Neo4Niha()
 
     def retrieve_graph(self):
-        query = "MATCH (n:TEST2)-[r]-(m:TEST1) return n,r,m"
+        query = "MATCH (m:TEST3)-[r:isA]->(n:TEST4) RETURN m,r,n LIMIT 25"
         response = self.db.retrieve(query)
         self.to_graph(response)
+        return self.graph
 
     def to_graph(self, response):
         _nodes = dict()
         _edges = dict()
         for node in response:
+            print(node)
             source_node = self.to_tnode(node['r'].nodes[0])
             target_node = self.to_tnode(node['r'].nodes[1])
             _id = node['r'].id
             _type = node['r'].type
             properties = dict(node['r'])
             relation = self.to_relation(_id, source_node, target_node, _type, properties)
-            source_label = list(source_node.Labels)[0]
-            target_label = list(target_node.Labels)[0]
-            if source_label not in _nodes.keys():
-                _nodes[source_label] = source_node
-            if target_label not in _nodes.keys():
-                _nodes[target_label] = source_node
-            key = "{source}-{relation}-{target}".format(source=source_label, relation=_type, target=target_label)
+            if source_node.Labels[0] not in _nodes.keys():
+                _nodes[source_node.Labels[0]] = source_node
+            if target_node.Labels[0] not in _nodes.keys():
+                _nodes[target_node.Labels[0]] = source_node
+            key = "{source}-{relation}-{target}".format(source=source_node.Labels[0], relation=_type,
+                                                        target=target_node.Labels[0])
             _edges[key] = relation
         self.graph.Nodes = _nodes
-        self.graph.Edges = _edges
+        self.graph.Relation = _edges
+        return self.graph
 
     def to_tnode(self, _node):
         node = Node()
+        print("38 : ", _node)
+        print(set(_node.labels))
+        print(_node.id)
         properties = dict(_node)
         node.Labels = set(_node.labels)
         node.Id = _node.id
@@ -73,4 +78,4 @@ if __name__ == '__main__':
     n4j = Neo4jGraph(g)
     n4j.retrieve_graph()
     print("nodes : ", g.Nodes)
-    print("edges : ", g.Edges)
+    print("edges : ", g.Relation)

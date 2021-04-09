@@ -22,10 +22,11 @@ class Neo4Niha:
 
     def delete(self, query):
         with self.driver.session() as session:
-            return session.read_transaction(self.__delete, query)
+            return session.write_transaction(self.__delete, query)
 
     def update(self, query):
-        pass
+        with self.driver.session() as session:
+            return session.write_transaction(self.__update, query)
 
     @staticmethod
     def __create(tx, query):
@@ -42,4 +43,10 @@ class Neo4Niha:
     @staticmethod
     def __delete(tx, query):
         result = tx.run(query)
+        return result
+
+    @staticmethod
+    def __update(tx, query):
+        result = tx.run(query)
+        #print("Response : ", result.single()[0])
         return result

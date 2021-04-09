@@ -8,14 +8,14 @@ class Neo4jNode:
         self.db = Neo4Niha()
 
     def create_query(self):
-        query = "create (n"
+        query = "CREATE (n"
         for label in self.node.Labels:
             query += ":{label}".format(label=label)
         query += " {AoKID:" + self.node.AoKID + ", Value:" + self.node.Value + ", SystemLevelType:" + self.node.SystemLevelType + ", AbstractionLevel:" + self.node.AbstractionLevel + ", Tag:" + self.node.Tag + ", Validity:" + self.node.Validity + ", ProcessingTag:" + self.node.ProcessingTag + ", Evaluation:" + self.node.Evaluation + ", DateTimeStamp:" + self.node.DateTimeStamp + ", AgeInMilliseconds:" + self.node.AgeInMilliseconds + ", AttentionLevel:" + self.node.AttentionLevel
         for key, value in zip(self.node.TruthValue.keys(), self.node.TruthValue.values()):
             # print(key, value)
             query += ", TV_" + key + ":" + value
-        query += "})"
+        query += "}) RETURN n"
         return query
 
     def delete_query(self):
@@ -32,20 +32,38 @@ class Neo4jNode:
         query += "WHERE n.Neo4jID=" + self.node.Neo4jID + " RETURN n"
         return query
 
+    def update_query(self):
+        query = "MATCH (n"
+        for label in self.node.Labels:
+            query += ":{label}".format(label=label)
+        query += " {name: '" + self.node.name + "'}) SET "
+        query += " n.AoKID=" + self.node.AoKID + ", n.Value=" + self.node.Value + ", n.SystemLevelType=" + self.node.SystemLevelType + ", n.AbstractionLevel=" + self.node.AbstractionLevel + ", n.Tag=" + self.node.Tag + ", n.Validity=" + self.node.Validity + ", n.ProcessingTag=" + self.node.ProcessingTag + ", n.Evaluation=" + self.node.Evaluation + ", n.DateTimeStamp=" + self.node.DateTimeStamp + ", n.AgeInMilliseconds=" + self.node.AgeInMilliseconds + ", n.AttentionLevel=" + self.node.AttentionLevel
+        for key, value in zip(self.node.TruthValue.keys(), self.node.TruthValue.values()):
+            # print(key, value)
+            query += ", n.TV_" + key + "=" + value
+        query += "return n"
+        print(query)
+
     def create_node(self):
-        query = self.create_query()
+        # query = self.create_query()
+        query = "CREATE(m:trial {name:'trial', domain:'trial'}) return m"
         response = self.db.create(query)
 
     def retrieve_node(self):
         # query = self.retrieve_query()
         query = "MATCH(n:Test) RETURN n"
         response = self.db.retrieve(query)
-        print("r", response)
         self.to_tnode(response)
 
     def delete_node(self):
-        query = self.delete_query()
+        #query = self.delete_query()
+        query = "MATCH (n:Laptop) DETACH DELETE n"
         response = self.db.delete(query)
+
+    def update_node(self):
+        query = "MATCH (n:TEST1 {name:'TEST1'}) SET n.AoKID=10 return n"
+        print(query)
+        response = self.db.update(query)
 
     def to_tnode(self, response):
         tnode1 = Node()
@@ -67,11 +85,12 @@ class Neo4jNode:
             tnode1.Evaluation = data['n']['Evaluation']
             tnode1.ProcessingTag = data['n']['ProcessingTag']
             tnode1.SystemLevelType = data['n']['SystemLevelType']
-            #tnode1.TruthValue = data['n']['TruthValue']
+            # tnode1.TruthValue = data['n']['TruthValue']
             print(node)
 
 
 if __name__ == '__main__':
     node = Node
     tnode = Neo4jNode(node)
-    tnode.retrieve_node()
+    # tnode.retrieve_node()
+    tnode.update_node()
