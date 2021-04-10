@@ -47,4 +47,4 @@ class Neo4jMemoryChunk:
         # memorychunk.type="graph"
         memorychunk.Nid = neo4graph.Nodes
         memorychunk.Rid = neo4graph.Relation
-        memorychunk.rtype = neo4graph.Relation['relation']
+        memorychunk.rtype = neo4graph.Relation['_relation']

@@ -1,7 +1,10 @@
 from Neo4JLayer.Neo4j import Neo4Niha
 from Node import Node
-from Functions.functions import *
+from Functions.functions import to_tnode
 import datetime
+
+from niha_thrift.ttypes import TNode
+
 
 class Neo4jNode:
     def __init__(self, node):
@@ -17,7 +20,7 @@ class Neo4jNode:
             for key, value in zip(self.node.TruthValue.keys(), self.node.TruthValue.values()):
                 # print(key, value)
                 query += ", TV_" + key + ":" + value
-        query += "}) RETURN n"
+        query += "}) RETURN ID(n) as id"
         #print(query)
         return query
 
@@ -39,17 +42,18 @@ class Neo4jNode:
 
     def create_node(self):
         query = self.create_node_query()
-        # query = "CREATE(m:trial {name:'trial', domain:'trial'}) return m"
         response = self.db.create(query)
-        #print(response)
-        return self.to_tnode(response)
+        self.node.Neo4jID = response[0]
+
+
 
     def retrieve_node(self, n_id):
+        _nodes = []
         query = self.retrieve_node_query(n_id)
-        #query = "MATCH(n:Test) RETURN n"
         response = self.db.retrieve(query)
-        #print(response)
-        return self.to_tnode(response)
+        for node_ in response:
+            _nodes.append(to_tnode(node_['n']))
+        return _nodes
 
     def delete_node(self, n_id):
         query = self.delete_node_query(n_id)
@@ -58,44 +62,38 @@ class Neo4jNode:
 
     def update_node(self, n_id):
         query = self.update_node_query(n_id)
-        #query = "MATCH (n:TEST1 {name:'TEST1'}) SET n.AoKID=10 return n"
-        #print(query)
         response = self.db.update(query)
         return self.to_tnode(response)
 
-    def to_tnode(self, response):
-        tnode1 = TNode()
-
-        for node in response:
-            data = node.data()
-            #print(data)
-            #print(set(node['n'].labels))
-            #print(node['n'].id)
-            tnode1.Labels = set(node['n'].labels)
-            tnode1.Id = node['n'].id
-            tnode1.Labels = set(node['n'].labels)
-            tnode1.Id = node['n'].id
-            tnode1.AoKID = data['n']['AoKID']
-            tnode1.AbstractionLevel = data['n']['AbstractionLevel']
-            tnode1.AgeInMilliseconds = data['n']['AgeInMilliseconds']
-            tnode1.AttentionLevel = data['n']['AttentionLevel']
-            tnode1.Value = data['n']['Value']
-            tnode1.Validity = data['n']['Validity']
-            tnode1.Tag = data['n']['Tag']
-            tnode1.Evaluation = data['n']['Evaluation']
-            tnode1.ProcessingTag = data['n']['ProcessingTag']
-            tnode1.SystemLevelType = data['n']['SystemLevelType']
-            #tnode1.TruthValue = data['n']['TruthValue']
-        return tnode1
+    # def to_tnode(self, response):
+    #     tnode1 = TNode()
+    #
+    #     for node in response:
+    #         data = node.data()
+    #         tnode1.Labels = set(node['n'].labels)
+    #         tnode1.Id = node['n'].id
+    #         tnode1.Labels = set(node['n'].labels)
+    #         tnode1.Id = node['n'].id
+    #         tnode1.AoKID = data['n']['AoKID']
+    #         tnode1.AbstractionLevel = data['n']['AbstractionLevel']
+    #         tnode1.AgeInMilliseconds = data['n']['AgeInMilliseconds']
+    #         tnode1.AttentionLevel = data['n']['AttentionLevel']
+    #         tnode1.Value = data['n']['Value']
+    #         tnode1.Validity = data['n']['Validity']
+    #         tnode1.Tag = data['n']['Tag']
+    #         tnode1.Evaluation = data['n']['Evaluation']
+    #         tnode1.ProcessingTag = data['n']['ProcessingTag']
+    #         tnode1.SystemLevelType = data['n']['SystemLevelType']
+    #         #tnode1.TruthValue = data['n']['TruthValue']
+    #     return tnode1
 
 
 if __name__ == '__main__':
     node = TNode(AoKID="1", Labels={"Tester2"}, Value="1", SystemLevelType="abc", AbstractionLevel="1", Tag="Abs", Validity="not > 20", ProcessingTag="ptag", Evaluation="123", DateTimeStamp=str(datetime.datetime.now()), AgeInMilliseconds="600", AttentionLevel="1")
     tnode = Neo4jNode(node)
     nod=tnode.create_node()
-    #nod=tnode.retrieve_node("1")
-    #nod=tnode.update_node("1")
-    #nod=tnode.delete_node("1")
-
-    #print(nod.Labels)
-    #def __init__(self, Neo4jID=None, AoKID=None, Labels=None, Value=None, SystemLevelType=None, AbstractionLevel=None, Tag=None, Validity=None, ProcessingTag=None, TruthValue=None, Evaluation=None, DateTimeStamp=None, AgeInMilliseconds=None, AttentionLevel=None,):
+    nod=tnode.retrieve_node("1")
+    nod=tnode.update_node("1")
+    nod=tnode.delete_node("1")
+    print(nod.Labels)
+    def __init__(self, Neo4jID=None, AoKID=None, Labels=None, Value=None, SystemLevelType=None, AbstractionLevel=None, Tag=None, Validity=None, ProcessingTag=None, TruthValue=None, Evaluation=None, DateTimeStamp=None, AgeInMilliseconds=None, AttentionLevel=None,):
