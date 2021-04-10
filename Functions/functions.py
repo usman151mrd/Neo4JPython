@@ -61,7 +61,7 @@ def to_tnode(_node):
     node.Id = _node.id
     node.AoKID = properties['AoKID']
     node.AbstractionLevel = properties['AbstractionLevel']
-    node.AgeInMilliseconds = properties['AgeInMilliSeconds']
+    node.AgeInMilliseconds = properties['AgeInMilliseconds']
     node.AttentionLevel = properties['AttentionLevel']
     node.Value = properties['Value']
     node.Validity = properties['Validity']

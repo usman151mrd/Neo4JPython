@@ -2,7 +2,7 @@ from Neo4JLayer.Neo4j import Neo4Niha
 from Graph import Graph
 from niha_thrift.ttypes import TGraph
 
-
+from Functions.functions import *
 class Neo4jGraph:
     def __init__(self, graph):
         self.graph = graph
@@ -11,7 +11,7 @@ class Neo4jGraph:
     def retrieve_graph(self):
         query = "MATCH (m:TEST3)-[r:isA]->(n:TEST4) RETURN m,r,n LIMIT 25"
         response = self.db.retrieve(query)
-        self.to_graph(response)
+        to_graph(response)
         return self.graph
 
     def create_graph(self):

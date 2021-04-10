@@ -31,8 +31,8 @@ class Neo4Niha:
     @staticmethod
     def __create(tx, query):
         result = tx.run(query)
-        print("Response : ", result.single()[0])
-        return result
+        nodes = [node for node in result]
+        return nodes
 
     @staticmethod
     def __retrieve(tx, query):
