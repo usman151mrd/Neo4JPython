@@ -90,10 +90,10 @@ class Neo4jNode:
 
 if __name__ == '__main__':
     node = TNode(AoKID="1", Labels={"Tester2"}, Value="1", SystemLevelType="abc", AbstractionLevel="1", Tag="Abs", Validity="not > 20", ProcessingTag="ptag", Evaluation="123", DateTimeStamp=str(datetime.datetime.now()), AgeInMilliseconds="600", AttentionLevel="1")
-    tnode = Neo4jNode(node)
-    nod=tnode.create_node()
-    nod=tnode.retrieve_node("1")
-    nod=tnode.update_node("1")
-    tnode.delete_node("1")
-    print(nod.Labels)
-    def __init__(self, Neo4jID=None, AoKID=None, Labels=None, Value=None, SystemLevelType=None, AbstractionLevel=None, Tag=None, Validity=None, ProcessingTag=None, TruthValue=None, Evaluation=None, DateTimeStamp=None, AgeInMilliseconds=None, AttentionLevel=None,):
+    # tnode = Neo4jNode(node)
+    # nod=tnode.create_node()
+    # nod=tnode.retrieve_node("1")
+    # nod=tnode.update_node("1")
+    # tnode.delete_node("1")
+    # print(nod.Labels)
+    # def __init__(self, Neo4jID=None, AoKID=None, Labels=None, Value=None, SystemLevelType=None, AbstractionLevel=None, Tag=None, Validity=None, ProcessingTag=None, TruthValue=None, Evaluation=None, DateTimeStamp=None, AgeInMilliseconds=None, AttentionLevel=None,):
