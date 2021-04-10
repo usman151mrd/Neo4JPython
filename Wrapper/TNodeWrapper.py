@@ -94,6 +94,6 @@ if __name__ == '__main__':
     nod=tnode.create_node()
     nod=tnode.retrieve_node("1")
     nod=tnode.update_node("1")
-    nod=tnode.delete_node("1")
+    tnode.delete_node("1")
     print(nod.Labels)
     def __init__(self, Neo4jID=None, AoKID=None, Labels=None, Value=None, SystemLevelType=None, AbstractionLevel=None, Tag=None, Validity=None, ProcessingTag=None, TruthValue=None, Evaluation=None, DateTimeStamp=None, AgeInMilliseconds=None, AttentionLevel=None,):
