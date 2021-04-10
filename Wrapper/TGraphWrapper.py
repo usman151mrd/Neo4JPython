@@ -29,7 +29,8 @@ class Neo4jGraph:
             _node_ids.update([sid, tid])
             _edge_ids.add(rid)
         query = "create (g:Graph {name:'graph',nid:"+list(_node_ids)+",rid:"+list(_edge_ids)+"}) return ID(g) as id"
-        self.db.create(query)
+        response = self.db.create(query)
+        self.graph.ID = response[0]['id']
 
 
 if __name__ == '__main__':

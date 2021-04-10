@@ -178,7 +178,7 @@ struct TGraph
 
 struct TMemoryChunk
 {
-    1: required string ID;
+    1: required string ID; // neo4jID updated
     2: required string TimeStamp;
     3: TGraph Graph;
     4: required i16 Capacity;
