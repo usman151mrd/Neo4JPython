@@ -5,7 +5,6 @@ from niha_thrift.ttypes import *
 from Functions.functions import *
 from TNodeWrapper import Neo4jNode
 
-
 class Neo4jRelation:
     def __init__(self, _relation=None):
         self.__relation = _relation
@@ -15,43 +14,41 @@ class Neo4jRelation:
         self.__relation = value
 
     def create_query(self):
-        print(self.__relation.SourceNode)
-        print(self.__relation.TargetNode)
+        print(self.__relation)
         query1 = "MERGE (n"
         for label in self.__relation.SourceNode.Labels:
             query1 += ":{label}".format(label=label)
-        query1 += " {AoKID:" + self.__relation.SourceNode.AoKID + ", Value:" + self.__relation.SourceNode.Value + ", SystemLevelType:'" + self.__relation.SourceNode.SystemLevelType + "', AbstractionLevel:'" + self.__relation.SourceNode.AbstractionLevel + "', Tag:'" + self.__relation.SourceNode.Tag + "', Validity:'" + self.__relation.SourceNode.Validity + "', ProcessingTag:'" + self.__relation.SourceNode.ProcessingTag + "', Evaluation:'" + self.__relation.SourceNode.Evaluation + "', AgeInMilliseconds:'" + self.__relation.SourceNode.AgeInMilliseconds + "', AttentionLevel:'" + self.__relation.SourceNode.AttentionLevel + "'"
+        query1 += " {AoKID: " + str(self.__relation.SourceNode.AoKID) + ", Value: " + str(self.__relation.SourceNode.Value) + ", SystemLevelType:'" + self.__relation.SourceNode.SystemLevelType + "', AbstractionLevel:'" + self.__relation.SourceNode.AbstractionLevel + "', Tag:'" + self.__relation.SourceNode.Tag + "', Validity:'" + self.__relation.SourceNode.Validity + "', ProcessingTag:'" + self.__relation.SourceNode.ProcessingTag + "', Evaluation:'" + self.__relation.SourceNode.Evaluation + "', AgeInMilliseconds:'" + self.__relation.SourceNode.AgeInMilliseconds + "', AttentionLevel:'" + self.__relation.SourceNode.AttentionLevel + "', TV_keys: "+str(list(self.__relation.SourceNode.TruthValue.keys()))
         if self.__relation.SourceNode.TruthValue is not None:
             for key, value in zip(self.__relation.SourceNode.TruthValue.keys(),
                                   self.__relation.TargetNode.TruthValue.values()):
                 # print(key, value)
-                query1 += ", TV_" + key + ":" + value
+                query1 += ", " + str(key) + ":" + str(value)
         query1 += "})"
 
         query2 = " MERGE (m"
         for label in self.__relation.TargetNode.Labels:
             query2 += ":{label}".format(label=label)
-        query2 += " {AoKID:" + self.__relation.TargetNode.AoKID + ", Value:" + self.__relation.TargetNode.Value + ", SystemLevelType:'" + self.__relation.TargetNode.SystemLevelType + "', AbstractionLevel:'" + self.__relation.TargetNode.AbstractionLevel + "', Tag:'" + self.__relation.TargetNode.Tag + "', Validity:'" + self.__relation.TargetNode.Validity + "', ProcessingTag:'" + self.__relation.TargetNode.ProcessingTag + "', Evaluation:'" + self.__relation.TargetNode.Evaluation + "', AgeInMilliseconds:'" + self.__relation.TargetNode.AgeInMilliseconds + "', AttentionLevel:'" + self.__relation.TargetNode.AttentionLevel + "'"
+        query2 += " {AoKID:" + str(self.__relation.TargetNode.AoKID) + ", Value:" + str(self.__relation.TargetNode.Value) + ", SystemLevelType:'" + self.__relation.TargetNode.SystemLevelType + "', AbstractionLevel:'" + self.__relation.TargetNode.AbstractionLevel + "', Tag:'" + self.__relation.TargetNode.Tag + "', Validity:'" + self.__relation.TargetNode.Validity + "', ProcessingTag:'" + self.__relation.TargetNode.ProcessingTag + "', Evaluation:'" + self.__relation.TargetNode.Evaluation + "', AgeInMilliseconds:'" + self.__relation.TargetNode.AgeInMilliseconds + "', AttentionLevel:'" + self.__relation.TargetNode.AttentionLevel + "' , TV_keys: "+str(list(self.__relation.TargetNode.TruthValue.keys()))
         if self.__relation.TargetNode.TruthValue is not None:
-            for key, value in zip(self.__relation.TruthValue.TruthValue.keys(),
+            for key, value in zip(self.__relation.SourceNode.TruthValue.keys(),
                                   self.__relation.TargetNode.TruthValue.values()):
                 # print(key, value)
-                query2 += ", TV_" + key + ":" + value
+                query2 += ", " + str(key) + ":" + str(value)
         query2 += "})"
         return query1 + query2 + " Merge (n)-[r:" + self.__relation.RelationType + " {AoKID:'" + self.__relation.AoKID + "', RelationType:'" + self.__relation.RelationType + "', AttentionLevel: '" + self.__relation.AttentionLevel + "'}]-(m) return ID(n) as sid,ID(r) as rid,ID(m) as tid"
 
     def update_query(self, r_id):
-        return "match ()-[r]-() where ID(r)=" + r_id + " set r.AoKID= " + self.__relation.AoKID + ", r.RelationType= '" + self.__relation.RelationType + "', r.IsBiDirectional= '" + self.__relation.IsBiDirectional + "' ,r.AttentionLevel= '" + self.__relation.AttentionLevel + "' return r"
+        return "match ()-[r]-() where ID(r)=" + r_id + " set r.AoKID= " + self.__relation.AoKID + ", r.RelationType= '" + self.__relation.RelationType + "', r.IsBiDirectional= '" + self.__relation.IsBiDirectional + "' ,r.AttentionLevel= '" + self.__relation.AttentionLevel + "' return 1"
 
     def retrieve_query(self, r_id):
         return "match (s)-[r]-(t) where ID(r)=" + r_id + " return s,r,t"
 
     def delete_relation_query(self, r_id):
-        return "match ()-[r]-() where ID(r)=" + r_id + " delete r"
+        return "match ()-[r]-() where ID(r)=" + r_id + " delete r return 1"
 
     def create_relation(self):
         query = self.create_query()
-        print(query)
         response = self.db.create(query)
         _id_dictionary = [{"sid": record['sid'], "rid": record['rid'], "tid": record['tid']}
                           for record in response]
@@ -70,27 +67,14 @@ class Neo4jRelation:
 
     def update_relation(self, r_id):
         query = self.update_query(r_id)
-        print(query)
         response = self.db.update(query)
-        return to_graph(response)
 
 
 if __name__ == '__main__':
-    node = TNode(AoKID="1", Labels={"Tester"}, Value="1", SystemLevelType="abc", AbstractionLevel="1", Tag="Abs",
-                 Validity="not > 20", ProcessingTag="ptag", Evaluation="123",
-                 DateTimeStamp=str(datetime.datetime.now()), AgeInMilliseconds="600", AttentionLevel="1")
-    tnode = Neo4jNode(node)
-    # nod = tnode.create_node()
-    SourceNode = tnode.retrieve_node("32")
-    # print("source",SourceNode)
-    TargetNode = tnode.retrieve_node("1")
-    # print("target",TargetNode)
-    relation = TRelation(AoKID="25", Labels={"trial"}, RelationType="trial", SourceNode=SourceNode,
-                         TargetNode=TargetNode,
-                         IsBiDirectional="True", AttentionLevel="3")
-    trelation = Neo4jRelation(relation)
-    trelation.create_relation()
-    # trelation.retrieve_relation("53")
-    # trelation.update_relation("53")
-    # trelation.delete_relation("53")
-    # def __init__(self, Neo4jID=None, AoKID=None, Labels=None, RelationType=None, SourceNode=None, TargetNode=None, IsBiDirectional=None, Properties=None, AttentionLevel=None, TruthValue=None,):
+    node1=TNode(AoKID='1',Labels={"person1"},Value="4",SystemLevelType="abc",AbstractionLevel="first", Tag="abc", Validity="val",ProcessingTag="ptag",TruthValue={'Key1':'1234','Key2':'125'}, Evaluation="aaa",DateTimeStamp="10 April", AttentionLevel="1", AgeInMilliseconds="700")
+    neo4=Neo4jNode(node1)
+    SourseNode=neo4.retrieve_node("70")
+    TargetNode=neo4.retrieve_node("71")
+    rel1=TRelation(AoKID='4', Labels={"knows"},RelationType="KNOWS",SourceNode=SourseNode,TargetNode=TargetNode,Properties="abc",AttentionLevel="alevel",TruthValue={'RKey1':'1234','RKey2':'125'})
+    neorel=Neo4jRelation(rel1)
+    print(neorel.create_relation())

@@ -35,20 +35,15 @@ def to_graph(response):
     _nodes = dict()
     _edges = dict()
     for node in response:
-        print(node)
         source_node = to_tnode(node['r'].nodes[0])
         target_node = to_tnode(node['r'].nodes[1])
         _id = node['r'].id
         _type = node['r'].type
         properties = dict(node['r'])
         relation = to_relation(_id, source_node, target_node, _type, properties)
-        if source_node.Labels[0] not in _nodes.keys():
-            _nodes[source_node.Labels[0]] = source_node
-        if target_node.Labels[0] not in _nodes.keys():
-            _nodes[target_node.Labels[0]] = source_node
-        key = "{source}-{relation}-{target}".format(source=source_node.Labels[0], relation=_type,
-                                                    target=target_node.Labels[0])
-        _edges[key] = relation
+        _nodes[source_node.Neo4jID] = source_node
+        _nodes[target_node.Neo4jID] = target_node
+        _edges[_id] = relation
     graph.Nodes = _nodes
     graph.Relation = _edges
     return graph
@@ -69,7 +64,10 @@ def to_tnode(_node):
     node.Evaluation = properties['Evaluation']
     node.ProcessingTag = properties['ProcessingTag']
     node.SystemLevelType = properties['SystemLevelType']
-    # node.TruthValue = properties['TruthValue']
+    tv_dict = dict()
+    for key in properties['TV_keys']:
+        tv_dict[key] = properties[key]
+    node.TruthValue = tv_dict
     return node
 
 
