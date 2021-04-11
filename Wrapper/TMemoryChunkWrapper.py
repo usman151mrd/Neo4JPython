@@ -1,3 +1,4 @@
+from Functions.functions import to_graph
 from Neo4JLayer.Neo4j import Neo4Niha
 from niha_thrift.ttypes import TNode, TRelation, TGraph, TMemoryChunk
 from TGraphWrapper import Neo4jGraph
@@ -22,7 +23,7 @@ class Neo4jMemoryChunk:
         response = self.db.create(query)
         self.graph.ID = response[0]['id']
 
-    def retrieve_memory_chunk(self):
+    def retrieve_memory_chunk(self, _id):
         graph = TGraph()
         neo4graph = Neo4jGraph(graph)
         neo4graph.retrieve_graph()
@@ -37,7 +38,18 @@ class Neo4jMemoryChunk:
     def to_memory_chunck(self, neo4graph):
         memory_chunk = TMemoryChunk()
         memory_chunk.Graph = neo4graph
-        # memorychunk.type="graph"
         memory_chunk.Nid = neo4graph.Nodes
         memory_chunk.Rid = neo4graph.Relation
         memory_chunk.rtype = neo4graph.Relation['_relation']
+
+    def retrieve_by_id(self, _id):
+        q = "match (m) where ID(g)={0} return m".format(_id)
+        response = self.db.retrieve(q)
+        properties = response[0].data()
+        print(properties)
+
+
+if __name__ == '__main__':
+    memory_ = TMemoryChunk()
+    memory = Neo4jMemoryChunk(memory_)
+    memory.retrieve_by_id()
