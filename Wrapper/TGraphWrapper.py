@@ -41,7 +41,9 @@ class Neo4jGraph:
         for rid in properties['g']['rid']:
             r = self.__relation.retrieve_by_id(rid)
             rel += r
-        print(to_graph(rel))
+        _graph = to_graph(rel)
+        _graph.ID = response[0]['g'].id
+        print(_graph)
         print(properties)
 
 

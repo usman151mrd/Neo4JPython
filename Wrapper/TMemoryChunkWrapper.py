@@ -12,6 +12,9 @@ class Neo4jMemoryChunk:
         self.__relation = TRelation
         self.__graph = Neo4jGraph
 
+    def set_memory_chunk(self, memory_chunk):
+        self.memory_chunk = memory_chunk
+
     def create_memory_chunk(self):
         self.__graph.graph = self.memory_chunk.Graph
         self.__graph.create_graph()
@@ -26,7 +29,7 @@ class Neo4jMemoryChunk:
     def retrieve_memory_chunk(self, _id):
         graph = TGraph()
         neo4graph = Neo4jGraph(graph)
-        neo4graph.retrieve_graph()
+        neo4graph.retrieve_by_id()
         self.to_memorychunck(graph)
 
     def update_memory_chunk(self):

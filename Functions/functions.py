@@ -46,6 +46,7 @@ def to_graph(response):
         _edges[_id] = relation
     graph.Nodes = _nodes
     graph.Relation = _edges
+
     return graph
 
 
@@ -53,7 +54,7 @@ def to_tnode(_node):
     node = TNode()
     properties = dict(_node)
     node.Labels = set(_node.labels)
-    node.Id = _node.id
+    node.Neo4jID = _node.id
     node.AoKID = properties['AoKID']
     node.AbstractionLevel = properties['AbstractionLevel']
     node.AgeInMilliseconds = properties['AgeInMilliseconds']
