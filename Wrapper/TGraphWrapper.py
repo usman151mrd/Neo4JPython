@@ -43,8 +43,8 @@ class Neo4jGraph:
             rel += r
         _graph = to_graph(rel)
         _graph.ID = response[0]['g'].id
-        print(_graph)
-        print(properties)
+        self.graph = _graph
+        return _graph
 
 
 if __name__ == '__main__':

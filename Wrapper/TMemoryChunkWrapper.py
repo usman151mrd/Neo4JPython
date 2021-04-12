@@ -27,10 +27,17 @@ class Neo4jMemoryChunk:
         self.graph.ID = response[0]['id']
 
     def retrieve_memory_chunk(self, _id):
-        graph = TGraph()
-        neo4graph = Neo4jGraph(graph)
-        neo4graph.retrieve_by_id()
-        self.to_memorychunck(graph)
+        q = "match (m:MemoryChunk) where ID(m)={0} return m".format(_id)
+        response = self.db.retrieve(q)
+        properties = response[0].data()
+        gid = properties['m']['gid']
+        self.memory_chunk.Graph = self.__graph.retrieve_by_id(gid)
+        self.memory_chunk.Capacity = properties['m']['Capacity']
+        self.memory_chunk.TimeStamp = properties['m']['TimeStamp']
+        self.memory_chunk.DecayLevel = properties['m']['DecayLevel']
+        self.memory_chunk.AttentionLevel = properties['m']['AttentionLevel']
+        self.memory_chunk.Evaluation = properties['m']['Evaluation']
+        self.memory_chunk.Importance = properties['m']['Importance']
 
     def update_memory_chunk(self):
         pass
