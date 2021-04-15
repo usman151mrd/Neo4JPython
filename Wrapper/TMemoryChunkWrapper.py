@@ -1,16 +1,19 @@
 from Functions.functions import to_graph
 from Neo4JLayer.Neo4j import Neo4Niha
 from niha_thrift.ttypes import TNode, TRelation, TGraph, TMemoryChunk
-from TGraphWrapper import Neo4jGraph
-from TRelationWrapper import Neo4jRelation
+from Wrapper.TGraphWrapper import Neo4jGraph
+from Wrapper.TRelationWrapper import Neo4jRelation
 
 
 class Neo4jMemoryChunk:
-    def __init__(self, memory_chunk):
-        self.memory_chunk = memory_chunk
+    def __init__(self, _memory_chunk=None):
+        self.memory_chunk = _memory_chunk
         self.db = Neo4Niha()
         self.__relation = TRelation
         self.__graph = Neo4jGraph
+
+    def set_memoryChunk(self, value):
+        self.memory_chunk = value
 
     def set_memory_chunk(self, memory_chunk):
         self.memory_chunk = memory_chunk
@@ -24,7 +27,7 @@ class Neo4jMemoryChunk:
             self.memory_chunk.AttentionLevel, self.memory_chunk.DecayLevel, self.memory_chunk.Importance,
             self.memory_chunk.Evaluation, self.memory_chunk.Graph.Neo4jID)
         response = self.db.create(query)
-        self.graph.ID = response[0]['id']
+        self.__graph.ID = response[0]['id']
 
     def retrieve_memory_chunk(self, _id):
         q = "match (m:MemoryChunk) where ID(m)={0} return m".format(_id)
@@ -39,11 +42,17 @@ class Neo4jMemoryChunk:
         self.memory_chunk.Evaluation = properties['m']['Evaluation']
         self.memory_chunk.Importance = properties['m']['Importance']
 
-    def update_memory_chunk(self):
-        pass
+    def update_memory_chunk(self, _id):
+        query = "MATCH (n:MemoryChunk where ID(m)={0} set TimeStamp={1}, Capacity={2},A ttentionLevel:{3}," \
+                "DecayLevel:{4},Importance:{5},Evaluation:{6}) return 1".format(
+            _id, self.memory_chunk.TimeStamp, self.memory_chunk.Capacity, self.memory_chunk.AttentionLevel,
+            self.memory_chunk.DecayLevel, self.memory_chunk.Importance,
+            self.memory_chunk.Evaluation)
+        response = self.db.update(query)
 
-    def delete_memory_chunk(self):
-        pass
+    def delete_memory_chunk(self, _id):
+        q = "match (m:MemoryChunk) where ID(m)={0} DETACH DELETE m return 1".format(_id)
+        response = self.db.delete(q)
 
     def to_memory_chunck(self, neo4graph):
         memory_chunk = TMemoryChunk()

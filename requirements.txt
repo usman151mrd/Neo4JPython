@@ -1,2 +1,6 @@
 neo4j~=4.2.1
 nltk~=3.5
+sys
+PyQt5
+json
+pandas

@@ -3,7 +3,7 @@ import datetime
 from Neo4JLayer.Neo4j import Neo4Niha
 from niha_thrift.ttypes import *
 from Functions.functions import *
-from TNodeWrapper import Neo4jNode
+from Wrapper.TNodeWrapper import Neo4jNode
 
 
 class Neo4jRelation:
@@ -15,43 +15,92 @@ class Neo4jRelation:
         self.__relation = value
 
     def create_query(self):
-        print(self.__relation.SourceNode)
-        print(self.__relation.TargetNode)
         query1 = "MERGE (n"
         for label in self.__relation.SourceNode.Labels:
             query1 += ":{label}".format(label=label)
-        query1 += " {AoKID:" + self.__relation.SourceNode.AoKID + ", Value:" + self.__relation.SourceNode.Value + ", SystemLevelType:'" + self.__relation.SourceNode.SystemLevelType + "', AbstractionLevel:'" + self.__relation.SourceNode.AbstractionLevel + "', Tag:'" + self.__relation.SourceNode.Tag + "', Validity:'" + self.__relation.SourceNode.Validity + "', ProcessingTag:'" + self.__relation.SourceNode.ProcessingTag + "', Evaluation:'" + self.__relation.SourceNode.Evaluation + "', AgeInMilliseconds:'" + self.__relation.SourceNode.AgeInMilliseconds + "', AttentionLevel:'" + self.__relation.SourceNode.AttentionLevel + "'"
+        query1 += " {"
+        query1 += "AoKID:{0} , Value:{1}, SystemLevelType:{2} , AbstractionLevel:{3}, Tag:'{4}', Validity:'{5}', " \
+                  "ProcessingTag:'{6}', Evaluation:{7}, AgeInMilliseconds:{8}, AttentionLevel:{9}, Domains:{10}".format(
+            self.__relation.SourceNode.AoKID, self.__relation.SourceNode.Value,
+            self.__relation.SourceNode.SystemLevelType, self.__relation.SourceNode.AbstractionLevel,
+            self.__relation.SourceNode.Tag, self.__relation.SourceNode.Validity,
+            self.__relation.SourceNode.ProcessingTag, self.__relation.SourceNode.Evaluation,
+            self.__relation.SourceNode.AgeInMilliseconds, self.__relation.SourceNode.AttentionLevel,
+            list(self.__relation.SourceNode.Domains))
         if self.__relation.SourceNode.TruthValue is not None:
+            Keylis = []
+            for key in self.__relation.TargetNode.TruthValue.keys():
+                Keylis.append(key)
+            query1 += ", Keys:{0}".format(list(Keylis))
             for key, value in zip(self.__relation.SourceNode.TruthValue.keys(),
-                                  self.__relation.TargetNode.TruthValue.values()):
+                                  self.__relation.SourceNode.TruthValue.values()):
                 # print(key, value)
-                query1 += ", TV_" + key + ":" + value
+                query1 += ", {0} :{1}".format(key, value)
         query1 += "})"
 
         query2 = " MERGE (m"
         for label in self.__relation.TargetNode.Labels:
             query2 += ":{label}".format(label=label)
-        query2 += " {AoKID:" + self.__relation.TargetNode.AoKID + ", Value:" + self.__relation.TargetNode.Value + ", SystemLevelType:'" + self.__relation.TargetNode.SystemLevelType + "', AbstractionLevel:'" + self.__relation.TargetNode.AbstractionLevel + "', Tag:'" + self.__relation.TargetNode.Tag + "', Validity:'" + self.__relation.TargetNode.Validity + "', ProcessingTag:'" + self.__relation.TargetNode.ProcessingTag + "', Evaluation:'" + self.__relation.TargetNode.Evaluation + "', AgeInMilliseconds:'" + self.__relation.TargetNode.AgeInMilliseconds + "', AttentionLevel:'" + self.__relation.TargetNode.AttentionLevel + "'"
+        query2 += " {"
+        query2 += "AoKID:{0} , Value:{1}, SystemLevelType:{2} , AbstractionLevel:{3}, Tag:'{4}', Validity:'{5}', " \
+                  "ProcessingTag:'{6}', Evaluation:{7}, AgeInMilliseconds:{8}, AttentionLevel:{9}, Domains:{10}".format(
+            self.__relation.TargetNode.AoKID, self.__relation.TargetNode.Value,
+            self.__relation.TargetNode.SystemLevelType, self.__relation.TargetNode.AbstractionLevel,
+            self.__relation.TargetNode.Tag, self.__relation.TargetNode.Validity,
+            self.__relation.TargetNode.ProcessingTag, self.__relation.TargetNode.Evaluation,
+            self.__relation.TargetNode.AgeInMilliseconds, self.__relation.TargetNode.AttentionLevel,
+            list(self.__relation.TargetNode.Domains))
         if self.__relation.TargetNode.TruthValue is not None:
-            for key, value in zip(self.__relation.TruthValue.TruthValue.keys(),
+            Keylis = []
+            for key in self.__relation.TargetNode.TruthValue.keys():
+                Keylis.append(key)
+            query2 += ", Keys:{0}".format(list(Keylis))
+            for key, value in zip(self.__relation.TargetNode.TruthValue.keys(),
                                   self.__relation.TargetNode.TruthValue.values()):
                 # print(key, value)
-                query2 += ", TV_" + key + ":" + value
+                query2 += ", {0} : {1}".format(key, value)
         query2 += "})"
-        return query1 + query2 + " Merge (n)-[r:" + self.__relation.RelationType + " {AoKID:'" + self.__relation.AoKID + "', RelationType:'" + self.__relation.RelationType + "', AttentionLevel: '" + self.__relation.AttentionLevel + "'}]-(m) return ID(n) as sid,ID(r) as rid,ID(m) as tid"
+        query = query1 + query2 + "Merge (n)-[r"
+        for label in self.__relation.Labels:
+            query += ":{label}".format(label=label)
+        query += "{"
+        query += "AoKID:{0}, RelationType:'{1}', AttentionLevel:{2} ,IsBiDirectional:{3}".format(self.__relation.AoKID,
+                                                                                                 self.__relation.RelationType,
+                                                                                                 self.__relation.AttentionLevel,
+                                                                                                 self.__relation.IsBiDirectional)
+        if self.__relation.TruthValue is not None:
+            Keylis = []
+            for key in self.__relation.TruthValue.keys():
+                Keylis.append(key)
+            query += ", Keys:{0}".format(list(Keylis))
+            for key, value in zip(self.__relation.TruthValue.keys(), self.__relation.TruthValue.values()):
+                query += ",{0} :{1}".format(key, value)
+        query += "}]-(m) return ID(n) as sid,ID(r) as rid,ID(m) as tid"
+        return query
 
     def update_query(self, r_id):
-        return "match ()-[r]-() where ID(r)=" + r_id + " set r.AoKID= " + self.__relation.AoKID + ", r.RelationType= '" + self.__relation.RelationType + "', r.IsBiDirectional= '" + self.__relation.IsBiDirectional + "' ,r.AttentionLevel= '" + self.__relation.AttentionLevel + "' return r"
+        query = "match ()-[r]-() where ID(r)={0} set r.AoKID={1}, r.RelationType='{2}'" \
+                ", r.AttentionLevel={3} ".format(
+            r_id, self.__relation.AoKID, self.__relation.RelationType, self.__relation.AttentionLevel)
+        if self.__relation.TruthValue is not None:
+            keylis = []
+            for key in self.__relation.TruthValue.keys():
+                keylis.append(key)
+            query += ", r.Keys={0}".format(list(keylis))
+            for key, value in zip(self.__relation.TruthValue.keys(), self.__relation.TruthValue.values()):
+                query += ",r.{0} ={1}".format(key, value)
+
+        query += " return 1"
+        return query
 
     def retrieve_query(self, r_id):
-        return "match (s)-[r]-(t) where ID(r)=" + r_id + " return s,r,t"
+        return "match (s)-[r]-(t) where ID(r)={0} return s,r,t".format(r_id)
 
     def delete_relation_query(self, r_id):
-        return "match ()-[r]-() where ID(r)=" + r_id + " delete r"
+        return "match ()-[r]-() where ID(r)={0} delete r".format(r_id)
 
     def create_relation(self):
         query = self.create_query()
-        print(query)
         response = self.db.create(query)
         _id_dictionary = [{"sid": record['sid'], "rid": record['rid'], "tid": record['tid']}
                           for record in response]
@@ -62,17 +111,26 @@ class Neo4jRelation:
     def retrieve_relation(self, r_id):
         query = self.retrieve_query(r_id)
         response = self.db.retrieve(query)
-        return to_graph(response)
+        relation=None
+        for node in response:
+            source_node = to_tnode(node['r'].nodes[0])
+            target_node = to_tnode(node['r'].nodes[1])
+            _id = node['r'].id
+            _type = node['r'].type
+            properties = dict(node['r'])
+            relation = to_relation(_id, source_node, target_node, _type, properties)
+        return relation
 
     def delete_relation(self, r_id):
         query = self.delete_relation_query(r_id)
         response = self.db.delete(query)
+        return response
 
     def update_relation(self, r_id):
         query = self.update_query(r_id)
         print(query)
         response = self.db.update(query)
-        return to_graph(response)
+        return response
 
     def retrieve_by_id(self, _id):
         query = "match (m)-[r]-(n) where ID(r)={0} return m,r,n".format(_id)

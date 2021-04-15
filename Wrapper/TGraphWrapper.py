@@ -1,15 +1,19 @@
 from Neo4JLayer.Neo4j import Neo4Niha
 from niha_thrift.ttypes import TGraph
-from TRelationWrapper import Neo4jRelation
+from Wrapper.TRelationWrapper import Neo4jRelation
 
 from Functions.functions import *
 
 
 class Neo4jGraph:
-    def __init__(self, graph):
-        self.graph = graph
+    def __init__(self, _graph=None):
+        self.graph=_graph
         self.db = Neo4Niha()
         self.__relation = Neo4jRelation()
+
+    def set_graph(self, value):
+        self.graph = value
+        print(value)
 
     def retrieve_graph(self):
         query = "MATCH (m:TEST3)-[r:isA]->(n:TEST4) RETURN m,r,n LIMIT 25"
@@ -32,6 +36,13 @@ class Neo4jGraph:
         query = "create (g:Graph {name:'graph',nid:{0},rid:{1}) return ID(g) as id".format(
             list(_node_ids), list(_edge_ids))
         response = self.db.create(query)
+
+    def update_query(self, g_id):
+        q = "match (g:Graph) where ID(g)={0} set g.nid= {1}, g.rid={2} return 1".format(g_id,list(self.graph.Nodes), list(self.graph.Edges))
+
+    def delete_query(self, g_id):
+        q = "match (g:Graph) where ID(g)={0} DETACH DELETE g RETURN 1".format(g_id)
+        response = self.db.delete(q)
 
     def retrieve_by_id(self, _id):
         q = "match (g:Graph) where ID(g)={0} return g".format(_id)

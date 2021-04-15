@@ -3,7 +3,7 @@ from niha_thrift.ttypes import TGraph, TNode, TRelation, TMemoryChunk
 
 
 def load_config():
-    with open("../Functions/config.json") as json_data_file:
+    with open(r"C:\Users\User\Downloads\neo4python\neo4python\Functions\config.json") as json_data_file:
         data = json.load(json_data_file)
     conf = data["neo4j"]
     scheme = conf["scheme"]
@@ -18,15 +18,18 @@ def load_config():
 def to_relation(_id, source, target, _relation, rel_properties):
     relation = TRelation()
     relation.Labels = _relation
-    relation.Neo4jId = _id
-    relation.AoKID = rel_properties['AoKID']
-    relation.RelationType = rel_properties['RelationType']
+    relation.Neo4jId = str(_id)
+    relation.AoKID = str(rel_properties['AoKID'])
+    relation.RelationType = str(rel_properties['RelationType'])
     relation.SourceNode = source
     relation.TargetNode = target
     relation.IsBiDirectional = False
-    relation.Properties = rel_properties
-    relation.AttentionLevel = 0.0
-    relation.TruthValue = dict()
+    #relation.Properties = rel_properties
+    relation.AttentionLevel = rel_properties['AttentionLevel']
+    tv_dict = dict()
+    for key in rel_properties['Keys']:
+        tv_dict[key] = rel_properties[key]
+    relation.TruthValue = tv_dict
     return relation
 
 
@@ -54,19 +57,19 @@ def to_tnode(_node):
     node = TNode()
     properties = dict(_node)
     node.Labels = set(_node.labels)
-    node.Neo4jID = _node.id
-    node.AoKID = properties['AoKID']
+    node.Neo4jID = str(_node.id)
+    node.AoKID = str(properties['AoKID'])
     node.AbstractionLevel = properties['AbstractionLevel']
     node.AgeInMilliseconds = properties['AgeInMilliseconds']
     node.AttentionLevel = properties['AttentionLevel']
-    node.Value = properties['Value']
+    node.Value = str(properties['Value'])
     node.Validity = properties['Validity']
     node.Tag = properties['Tag']
     node.Evaluation = properties['Evaluation']
     node.ProcessingTag = properties['ProcessingTag']
     node.SystemLevelType = properties['SystemLevelType']
     tv_dict = dict()
-    for key in properties['TV_keys']:
+    for key in properties['Keys']:
         tv_dict[key] = properties[key]
     node.TruthValue = tv_dict
     return node
