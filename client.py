@@ -22,7 +22,7 @@
 import sys
 import glob
 
-sys.path.append(r'C:\Users\User\Downloads\neo4python\neo4python\genpy')
+# sys.path.append(r'genpy')
 
 from genpy.niha_thrift import Neo4jGraph
 from genpy.niha_thrift import Neo4jRelation
@@ -39,54 +39,54 @@ from thrift.protocol import TBinaryProtocol
 def main():
     # Make socket
     transport = TSocket.TSocket('127.0.0.1', 9091)
-    transport1 = TSocket.TSocket('127.0.0.1', 9090)
-    transport2 = TSocket.TSocket('127.0.0.1', 9092)
-    transport3 = TSocket.TSocket('127.0.0.1', 9093)
+    # transport1 = TSocket.TSocket('127.0.0.1', 9090)
+    # transport2 = TSocket.TSocket('127.0.0.1', 9092)
+    # transport3 = TSocket.TSocket('127.0.0.1', 9093)
 
     # Buffering is critical. Raw sockets are very slow
     transport = TTransport.TBufferedTransport(transport)
-    transport1 = TTransport.TBufferedTransport(transport1)
-    transport2= TTransport.TBufferedTransport(transport2)
-    transport3= TTransport.TBufferedTransport(transport3)
+    # transport1 = TTransport.TBufferedTransport(transport1)
+    # transport2= TTransport.TBufferedTransport(transport2)
+    # transport3= TTransport.TBufferedTransport(transport3)
 
     # Wrap in a protocol
     protocol = TBinaryProtocol.TBinaryProtocol(transport)
-    protocol1 = TBinaryProtocol.TBinaryProtocol(transport1)
-    protocol2 = TBinaryProtocol.TBinaryProtocol(transport2)
-    protocol3 = TBinaryProtocol.TBinaryProtocol(transport3)
+    # protocol1 = TBinaryProtocol.TBinaryProtocol(transport1)
+    # protocol2 = TBinaryProtocol.TBinaryProtocol(transport2)
+    # protocol3 = TBinaryProtocol.TBinaryProtocol(transport3)
 
     # Create a client to use the protocol encoder
-    client = Neo4jNode.Client(protocol)
-    client1 = Neo4jRelation.Client(protocol1)
-    client2 = Neo4jGraph.Client(protocol2)
-    client3 = Neo4jMemoryChunk.Client(protocol3)
+    # client = Neo4jNode.Client(protocol)
+    # client1 = Neo4jRelation.Client(protocol)
+    client2 = Neo4jGraph.Client(protocol)
+    # client3 = Neo4jMemoryChunk.Client(protocol3)
 
     # Connect!
-    #transport.open()
-    #transport1.open()
-    transport2.open()
-    #transport3.open()
-    TS=TESystemLevelType.STRING
-    TA=TEAbstractionLevel.INSTANCE_NODE
+    # transport.open()
+    # transport1.open()
+    transport.open()
+    # transport3.open()
+    TS = TESystemLevelType.STRING
+    TA = TEAbstractionLevel.INSTANCE_NODE
     SNode = TNode(AoKID="5", Labels={"person11"}, Value="4", SystemLevelType=TS, AbstractionLevel=TA, Tag="abc",
-                 Validity="val", ProcessingTag="ptag", TruthValue={'Key1': 1234.0, 'Key2': 125.0}, Evaluation=0.0,
-                 DateTimeStamp="10 April", AttentionLevel=1.0, AgeInMilliseconds=0, Domains={"Human", "Living"})
+                  Validity="val", ProcessingTag="ptag", TruthValue={'Key1': 1234.0, 'Key2': 125.0}, Evaluation=0.0,
+                  DateTimeStamp="10 April", AttentionLevel=1.0, AgeInMilliseconds=0, Domains={"Human", "Living"})
     TS = TESystemLevelType.STRING
     TA = TEAbstractionLevel.INSTANCE_NODE
     TNOde = TNode(AoKID="5", Labels={"person111"}, Value="4", SystemLevelType=TS, AbstractionLevel=TA, Tag="abc",
                   Validity="val", ProcessingTag="ptag", TruthValue={'Key1': 1234.0, 'Key2': 125.0}, Evaluation=0.0,
                   DateTimeStamp="10 April", AttentionLevel=1.0, AgeInMilliseconds=0, Domains={"Human", "Living"})
-    #SNode = client.retrieve("140")
-    #TNOde = client.retrieve("100")
-    #print(SNode)
-    #print(TNOde)
-    rel = TRelation(AoKID="101", Labels={"Fiend_of"},SourceNode=SNode, TargetNode=TNOde, RelationType="trial",
+    # SNode = client.retrieve("140")
+    # TNOde = client.retrieve("100")
+    # print(SNode)
+    # print(TNOde)
+    rel = TRelation(AoKID="101", Labels={"Fiend_of"}, SourceNode=SNode, TargetNode=TNOde, RelationType="trial",
                     TruthValue={'Key1': 1234.0, 'Key2': 125.0}, AttentionLevel=1.0)
-    #print(rel)
-    #response=client1.update(rel,"105")
-    RT=TERepresentationType.CONCEPTUAL_GRAPH
-    graph=TGraph(Nodes={"sourcenode":SNode, "TargetNode":TNode}, Relations={"relation":rel}, RepresentationType=RT)
-    response=client2.create(graph=graph)
+    # print(rel)
+    # response=client1.update(rel,"105")
+    RT = TERepresentationType.CONCEPTUAL_GRAPH
+    graph = TGraph( Nodes={"sourcenode": SNode, "TargetNode": TNOde}, Relations={"relation": rel}, RepresentationType=RT)
+    response = client2.create(graph=graph)
     print("response : ", response)
     # node2 = TNode(AoKID="1", Labels={"person11"}, Value="4", SystemLevelType="abc", AbstractionLevel="first", Tag="abc",
     #               Validity="val", ProcessingTag="ptag", TruthValue={'Key1': '1234', 'Key2': '125'}, Evaluation="aaa",

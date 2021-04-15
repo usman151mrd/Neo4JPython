@@ -25,10 +25,12 @@ class Iface(object):
          - graph
 
         """
-        print("here")
-        n4j = Neo4jGraph()
-        n4j.set_graph(graph)
-        n4j.create_graph()
+        print('graph at thrift file ', graph)
+        # print("here")
+        # n4j = Neo4jGraph()
+        # n4j.set_graph(graph)
+        # n4j.create_graph()
+        return '1'
 
     def retrieveById(self, neo4jId):
         """
