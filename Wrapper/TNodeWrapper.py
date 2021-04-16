@@ -70,21 +70,18 @@ class Neo4jNode:
 
     def create_node(self):
         query = self.create_node_query()
-        print(query)
         response = self.db.create(query)
-        #print(response)
         self.node.Neo4jID = response[0]
-        #print(self.node.Neo4jID)
         _id=""
         for record in response:
             _id=record['id']
-        print(_id)
         return str(_id)
 
     def retrieve_node(self, n_id):
         query = self.retrieve_node_query(n_id)
         response = self.db.retrieve(query)
         node=to_tnode(response[0]['n'])
+        print(node)
         return node
 
     def delete_node(self, n_id):

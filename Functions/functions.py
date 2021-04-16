@@ -24,7 +24,7 @@ def to_relation(_id, source, target, _relation, rel_properties):
     relation.SourceNode = source
     relation.TargetNode = target
     relation.IsBiDirectional = False
-    #relation.Properties = rel_properties
+    # relation.Properties = rel_properties
     relation.AttentionLevel = rel_properties['AttentionLevel']
     tv_dict = dict()
     for key in rel_properties['Keys']:
@@ -48,7 +48,7 @@ def to_graph(response):
         _nodes[target_node.Neo4jID] = target_node
         _edges[_id] = relation
     graph.Nodes = _nodes
-    graph.Relation = _edges
+    graph.Relations = _edges
 
     return graph
 
@@ -72,7 +72,25 @@ def to_tnode(_node):
     for key in properties['Keys']:
         tv_dict[key] = properties[key]
     node.TruthValue = tv_dict
+    domains = list()
+    node.Domains = set(properties['Domains'])
+   # print(node.Domains)
     return node
+
+
+def to_memoryChunk(response):
+    memory_chunk = TMemoryChunk()
+    properties = dict(response)
+    memory_chunk.Neo4jID = str(response.id)
+    memory_chunk.ID = str(response.id)
+    #    memory_chunk.Graph = properties['Graph']
+    memory_chunk.Capacity = properties['Capacity']
+    memory_chunk.TimeStamp = properties['TimeStamp']
+    memory_chunk.DecayLevel = properties['DecayLevel']
+    memory_chunk.AttentionLevel = properties['AttentionLevel']
+    memory_chunk.Evaluation = properties['Evaluation']
+    memory_chunk.Importance = properties['Importance']
+    return memory_chunk
 
 
 def merge_node(t_node):

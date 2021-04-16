@@ -24,10 +24,7 @@ import glob
 
 # sys.path.append(r'genpy')
 
-from genpy.niha_thrift import Neo4jGraph
-from genpy.niha_thrift import Neo4jRelation
-from genpy.niha_thrift import Neo4jNode
-from genpy.niha_thrift import Neo4jMemoryChunk
+from genpy.niha_thrift import Neo4Niha
 from genpy.niha_thrift.ttypes import *
 
 from thrift import Thrift
@@ -38,58 +35,53 @@ from thrift.protocol import TBinaryProtocol
 
 def main():
     # Make socket
-    transport = TSocket.TSocket('127.0.0.1', 9091)
-    # transport1 = TSocket.TSocket('127.0.0.1', 9090)
-    # transport2 = TSocket.TSocket('127.0.0.1', 9092)
-    # transport3 = TSocket.TSocket('127.0.0.1', 9093)
+    transport = TSocket.TSocket('127.0.0.1', 9090)
 
     # Buffering is critical. Raw sockets are very slow
     transport = TTransport.TBufferedTransport(transport)
-    # transport1 = TTransport.TBufferedTransport(transport1)
-    # transport2= TTransport.TBufferedTransport(transport2)
-    # transport3= TTransport.TBufferedTransport(transport3)
 
     # Wrap in a protocol
     protocol = TBinaryProtocol.TBinaryProtocol(transport)
-    # protocol1 = TBinaryProtocol.TBinaryProtocol(transport1)
-    # protocol2 = TBinaryProtocol.TBinaryProtocol(transport2)
-    # protocol3 = TBinaryProtocol.TBinaryProtocol(transport3)
 
     # Create a client to use the protocol encoder
-    # client = Neo4jNode.Client(protocol)
-    # client1 = Neo4jRelation.Client(protocol)
-    client2 = Neo4jGraph.Client(protocol)
-    # client3 = Neo4jMemoryChunk.Client(protocol3)
+    client = Neo4Niha.Client(protocol)
 
     # Connect!
-    # transport.open()
-    # transport1.open()
     transport.open()
-    # transport3.open()
+
     TS = TESystemLevelType.STRING
     TA = TEAbstractionLevel.INSTANCE_NODE
     SNode = TNode(AoKID="5", Labels={"person11"}, Value="4", SystemLevelType=TS, AbstractionLevel=TA, Tag="abc",
                   Validity="val", ProcessingTag="ptag", TruthValue={'Key1': 1234.0, 'Key2': 125.0}, Evaluation=0.0,
                   DateTimeStamp="10 April", AttentionLevel=1.0, AgeInMilliseconds=0, Domains={"Human", "Living"})
-    TS = TESystemLevelType.STRING
-    TA = TEAbstractionLevel.INSTANCE_NODE
+    #response1 = client.createNode(Node)
+    #print("response : ", response1)
+
     TNOde = TNode(AoKID="5", Labels={"person111"}, Value="4", SystemLevelType=TS, AbstractionLevel=TA, Tag="abc",
                   Validity="val", ProcessingTag="ptag", TruthValue={'Key1': 1234.0, 'Key2': 125.0}, Evaluation=0.0,
                   DateTimeStamp="10 April", AttentionLevel=1.0, AgeInMilliseconds=0, Domains={"Human", "Living"})
-    # SNode = client.retrieve("140")
-    # TNOde = client.retrieve("100")
-    # print(SNode)
-    # print(TNOde)
+    #response2 = client.createNode(Node1)
+    #print("response : ", response2)
+    #SNode = client.retrieveNode("166")
+    #TNOde = client.retrieveNode("167")
+    #print(SNode)
+    #print(TNOde)
     rel = TRelation(AoKID="101", Labels={"Fiend_of"}, SourceNode=SNode, TargetNode=TNOde, RelationType="trial",
                     TruthValue={'Key1': 1234.0, 'Key2': 125.0}, AttentionLevel=1.0)
     # print(rel)
-    # response=client1.update(rel,"105")
-    RT = TERepresentationType.CONCEPTUAL_GRAPH
-    graph = TGraph( Nodes={"sourcenode": SNode, "TargetNode": TNOde}, Relations={"relation": rel}, RepresentationType=RT)
-    response = client2.create(graph=graph)
+    response=client.createRelation(rel)
     print("response : ", response)
-    # node2 = TNode(AoKID="1", Labels={"person11"}, Value="4", SystemLevelType="abc", AbstractionLevel="first", Tag="abc",
-    #               Validity="val", ProcessingTag="ptag", TruthValue={'Key1': '1234', 'Key2': '125'}, Evaluation="aaa",
+    # RT = TERepresentationType.SEMANTIC_NETWORK
+    # graph = TGraph(Neo4jID='148', Nodes={"140": SNode, "141": TNOde}, Relations={"relation": rel},
+    #                RepresentationType=RT)
+    # #print(graph)
+    # memoryChunk = TMemoryChunk(TimeStamp='timestamp', Graph=graph, Capacity=10, AttentionLevel=100.0, DecayLevel=1.0,
+    #                            Evaluation=0.0, Importance=9.0)
+    # response = client3.retrieve("155")
+    # print(type(response))
+    # print("response : ", response)
+    # # node2 = TNode(AoKID="1", Labels={"person11"}, Value="4", SystemLevelType="abc", AbstractionLevel="first", Tag="abc",
+    # #               Validity="val", ProcessingTag="ptag", TruthValue={'Key1': '1234', 'Key2': '125'}, Evaluation="aaa",
     #               DateTimeStamp="10 April", AttentionLevel=1, AgeInMilliseconds=0.0)
     # response = client.create(node2)
     # print("response : ", response)

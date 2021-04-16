@@ -64,10 +64,10 @@ class Neo4jRelation:
         for label in self.__relation.Labels:
             query += ":{label}".format(label=label)
         query += "{"
-        query += "AoKID:{0}, RelationType:'{1}', AttentionLevel:{2} ,IsBiDirectional:{3}".format(self.__relation.AoKID,
+        query += "AoKID:{0}, RelationType:'{1}', AttentionLevel:{2}".format(self.__relation.AoKID,
                                                                                                  self.__relation.RelationType,
-                                                                                                 self.__relation.AttentionLevel,
-                                                                                                 self.__relation.IsBiDirectional)
+                                                                                                 self.__relation.AttentionLevel
+                                                                                                 )
         if self.__relation.TruthValue is not None:
             Keylis = []
             for key in self.__relation.TruthValue.keys():

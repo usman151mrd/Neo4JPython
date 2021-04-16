@@ -315,43 +315,34 @@ service TNiHAFaceRecognition
     string Recognize(1: string image_file);
 }
 
-service Neo4jGraph
+service Neo4Niha
 {
-    string create(1: TGraph graph);
-    TGraph retrieveById(1: string neo4jId);
-    TGraph retrieve(1: string query);
-    #TGraph retrieve();
-    bool update(1: TGraph graph, 2: string neo4Id);
-    bool delete(1: string neo4Id);
-}
-
-service Neo4jRelation
-{
-    string create(1: TRelation relation);
-    TRelation retrieveById(1: string neo4jId);
-    TRelation retrieve(1: string query);
-    #TRelation retrieve();
-    bool update(1: TRelation relation, 2: string neo4Id);
-    bool delete(1: string neo4Id);
-}
-
-service Neo4jNode
-{
-    string create(1: TNode node);
+    string createNode(1: TNode node);
     #TNode retrieveById(1: string neo4jId);
-    TNode retrieve(1: string query);
+    TNode retrieveNode(1: string query);
     #TNode retrieve();
-    bool update(1: TNode node, 2: string neo4Id);
-    bool delete(1: string neo4Id);
-}
+    bool updateNode(1: TNode node, 2: string neo4Id);
+    bool deleteNode(1: string neo4Id);
 
+    string createRelation(1: TRelation relation);
+    TRelation retrieveByIdRelation(1: string neo4jId);
+    TRelation retrieveRelation(1: string query);
+    #TRelation retrieve();
+    bool updateRelation(1: TRelation relation, 2: string neo4Id);
+    bool deleteRelation(1: string neo4Id);
 
-service Neo4jMemoryChunk
-{
-    string create(1: TMemoryChunk memoryChunk);
-    TMemoryChunk retrieveById(1: string neo4jId);
-    TMemoryChunk retrieve(1: string query);
+    string createGraph(1: TGraph graph);
+    TGraph retrieveByIdGraph(1: string neo4jId);
+    TGraph retrieveGraph(1: string query);
+    #TGraph retrieve();
+    bool updateGraph(1: TGraph graph, 2: string neo4Id);
+    bool deleteGraph(1: string neo4Id);
+
+    string createMemoryChunk(1: TMemoryChunk memoryChunk);
+    TMemoryChunk retrieveByIdMemoryChunk(1: string neo4jId);
+    TMemoryChunk retrieveMemoryChunk(1: string query);
     #TMemoryChunk retrieve();
-    bool update(1: TMemoryChunk memoryChunk, 2: string neo4Id);
-    bool delete(1: string neo4Id);
+    bool updateMemoryChunk(1: TMemoryChunk memoryChunk, 2: string neo4Id);
+    bool deleteMemoryChunk(1: string neo4Id);
+
 }
